@@ -128,13 +128,6 @@ const UsersPage = () => {
                     <div className="text-sm text-gray-500">{user.username}</div>
                   </td>
 
-                  {/* Class */}
-                  <td className="px-6 py-4 text-sm text-gray-500">
-                    {user.role === "student" && user.class
-                      ? user.class.name
-                      : "-"}
-                  </td>
-
                   {/* Actions */}
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex justify-end space-x-2">

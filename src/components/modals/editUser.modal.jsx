@@ -33,10 +33,6 @@ const Content = ({ close, isLoading, setIsLoading, ...user }) => {
   const handleEditUser = (e) => {
     e.preventDefault();
 
-    if (user.role === "student" && !state.class) {
-      return toast.warning("Sinf tanlanmagan");
-    }
-
     setIsLoading(true);
 
     usersAPI
@@ -69,16 +65,6 @@ const Content = ({ close, isLoading, setIsLoading, ...user }) => {
         value={lastName}
         onChange={(v) => setField("lastName", v)}
       />
-
-      {user.role === "student" && (
-        <SelectComponent
-          required
-          label="Sinf"
-          value={state.class}
-          onChange={(v) => setField("class", v)}
-          options={classes.map((cls) => ({ label: cls.name, value: cls._id }))}
-        />
-      )}
 
       <div className="flex flex-col-reverse gap-3.5 w-full mt-5 xs:m-0 xs:flex-row xs:justify-end">
         <ButtonComponent
