@@ -1,0 +1,224 @@
+// Toast
+import { toast } from "sonner";
+
+// API
+import { usersAPI } from "../api/client";
+
+// React
+import { useEffect, useCallback } from "react";
+
+// Router
+import { useSearchParams } from "react-router-dom";
+
+// Helpers
+import { getRoleLabel } from "@/helpers/role.helpers";
+
+// Hooks
+import useModal from "@/hooks/useModal.hook";
+import useArrayStore from "@/hooks/useArrayStore.hook";
+
+// Icons
+import { Plus, Edit, Trash2, Key, Eye } from "lucide-react";
+
+// Components
+import Card from "@/components/ui/card.component";
+import Pagination from "@/components/ui/pagination.component";
+import ButtonComponent from "@/components/form/button.component";
+
+const UsersPage = () => {
+  const { openModal } = useModal();
+
+  // Search params
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentPage = parseInt(searchParams.get("page") || "1", 10);
+
+  const {
+    setPage,
+    initialize,
+    getMetadata,
+    getPageData,
+    hasCollection,
+    setPageErrorState,
+    setPageLoadingState,
+  } = useArrayStore("users");
+
+  // Initialize collection on mount/type change
+  useEffect(() => {
+    if (!hasCollection()) initialize(true); // pagination = true
+  }, [hasCollection, initialize]);
+
+  const metadata = getMetadata();
+  const pageData = getPageData(currentPage);
+
+  const users = pageData?.data || [];
+  const hasError = pageData?.error || null;
+  const isLoading = pageData?.isLoading || false;
+  const hasNextPage = pageData?.hasNextPage ?? false;
+  const hasPrevPage = pageData?.hasPrevPage ?? false;
+
+  // Load templates for current page & type
+  const fetchUsers = useCallback(
+    (page) => {
+      setPageLoadingState(page, true);
+      usersAPI
+        .getAll({ page, limit: 32 })
+        .then((res) => {
+          const { data, pagination } = res.data;
+          setPage(page, data, null, pagination);
+        })
+        .catch(({ message }) => {
+          toast.error(message || "Nimadir xato ketdi");
+          setPageErrorState(page, message || "Nimadir xato ketdi");
+        });
+    },
+    [setPageLoadingState, setPage, setPageErrorState]
+  );
+
+  // Navigate to page
+  const goToPage = useCallback(
+    (page) => {
+      if (page < 1) return;
+      setSearchParams({ page: page.toString() });
+    },
+    [setSearchParams]
+  );
+
+  // Load users when page changes
+  useEffect(() => {
+    const pageDataExists = getPageData(currentPage);
+    if (!pageDataExists) fetchUsers(currentPage);
+  }, [currentPage, fetchUsers, getPageData]);
+
+  if (isLoading) {
+    return <div className="text-center py-8">Yuklanmoqda...</div>;
+  }
+
+  return (
+    <div>
+      {/* Create New Btn */}
+      <ButtonComponent onClick={() => openModal("createUser")} className="px-3.5 mb-6">
+        <Plus className="size-5 mr-2" strokeWidth={1.5} />
+        Yangi foydalanuvchi
+      </ButtonComponent>
+
+      {/* Table */}
+      <Card responsive>
+        <div className="rounded-lg overflow-x-auto">
+          <table className="divide-y divide-gray-200">
+            {/* Thead */}
+            <thead>
+              <tr>
+                <th className="px-6 py-3 text-left">F.I.O</th>
+                <th className="px-6 py-3 text-left">Username</th>
+                <th className="px-6 py-3 text-left">Rol</th>
+                <th className="px-6 py-3 text-left">Sinf</th>
+                <th className="px-6 py-3 text-right">Harakatlar</th>
+              </tr>
+            </thead>
+
+            {/* Tbody */}
+            <tbody className="divide-y divide-gray-200">
+              {users.map((user) => (
+                <tr key={user._id} className="hover:bg-gray-50">
+                  {/* Full Name */}
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">
+                      {user.fullName}
+                    </div>
+                  </td>
+
+                  {/* Username */}
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-500">{user.username}</div>
+                  </td>
+
+                  {/* Role */}
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span
+                      className={`${
+                        user.role === "teacher"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-blue-100 text-blue-800"
+                      } px-2 inline-flex text-xs leading-5 font-semibold rounded-full`}
+                    >
+                      {getRoleLabel(user.role)}
+                    </span>
+                  </td>
+
+                  {/* Class */}
+                  <td className="px-6 py-4 text-sm text-gray-500">
+                    {user.role === "student" && user.class
+                      ? user.class.name
+                      : "-"}
+                  </td>
+
+                  {/* Actions */}
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div className="flex justify-end space-x-2">
+                      {/* Edit */}
+                      <button
+                        onClick={() => openModal("editUser", user)}
+                        className="text-indigo-600 hover:text-indigo-900"
+                      >
+                        <Edit className="size-5" strokeWidth={1.5} />
+                      </button>
+
+                      {/* 
+                      {/* Reset Password */}
+                      <button
+                        onClick={() => openModal("resetUserPassword", user)}
+                        className="text-orange-600 hover:text-orange-900"
+                      >
+                        <Key className="size-5" strokeWidth={1.5} />
+                      </button>
+
+                      {/* Delete */}
+                      <button
+                        onClick={() => openModal("deleteUser", user)}
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        <Trash2 className="size-5" strokeWidth={1.5} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Desktop Pagination Controls */}
+        {!isLoading && !hasError && users.length > 0 && (
+          <Pagination
+            maxPageButtons={5}
+            showPageNumbers={true}
+            onPageChange={goToPage}
+            currentPage={currentPage}
+            hasNextPage={hasNextPage}
+            hasPrevPage={hasPrevPage}
+            className="pt-6 max-md:hidden"
+            totalPages={metadata?.totalPages || 1}
+          />
+        )}
+      </Card>
+
+      {/* Mobile Pagination Controls */}
+      {!isLoading && !hasError && users.length > 0 && (
+        <div className="overflow-x-auto pb-1.5">
+          <Pagination
+            maxPageButtons={5}
+            showPageNumbers={true}
+            onPageChange={goToPage}
+            currentPage={currentPage}
+            hasNextPage={hasNextPage}
+            hasPrevPage={hasPrevPage}
+            className="pt-6 min-w-max md:hidden"
+            totalPages={metadata?.totalPages || 1}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default UsersPage;
