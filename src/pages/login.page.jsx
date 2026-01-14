@@ -4,47 +4,54 @@ import { toast } from "sonner";
 // Images
 import { logoImg } from "@/assets/images";
 
+// API
+import * as authAPI from "@/api/auth.api";
+
 // Router
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
+
+// Components
+import Card from "@/components/ui/card.component";
+import Input from "@/components/form/input.component";
+import Button from "@/components/form/button.component";
 
 // Hooks
 import useObjectState from "@/hooks/useObjectState.hook";
 
-// Components
-import Card from "@/components/ui/card.component";
-import InputComponent from "@/components/form/input.component";
-import ButtonComponent from "@/components/form/button.component";
-
 const LoginPage = () => {
-  const navigate = useNavigate();
+  // Redirect if already logged in
+  const isAuthenticated = localStorage.getItem("auth");
+  if (isAuthenticated) return <Navigate to="/" replace />;
 
+  const navigate = useNavigate();
   const { username, password, setField, isLoading } = useObjectState({
     username: "",
     password: "",
     isLoading: false,
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setField("isLoading", true);
 
-    const data = { username, password: password?.trim() };
+    try {
+      const response = await authAPI.login({
+        password: password.trim(),
+        username: username.trim().toLowerCase(),
+      });
 
-    authAPI
-      .login(data)
-      .then((response) => {
-        const { user, token } = response.data.data;
+      const { user, token } = response.data;
 
-        login(user, token);
-        toast.success("Tizimga muvaffaqiyatli kirdingiz!");
-        navigate("/");
-      })
-      .catch((error) => {
-        toast.error(
-          error.response?.data?.message || "Tizimga kirishda xatolik"
-        );
-      })
-      .finally(() => setField("isLoading", false));
+      // Save to localStorage
+      localStorage.setItem("auth", JSON.stringify({ user, token }));
+
+      toast.success("Tizimga muvaffaqiyatli kirdingiz!");
+      navigate("/");
+    } catch (error) {
+      toast.error(error.message || "Tizimga kirishda xatolik");
+    } finally {
+      setField("isLoading", false);
+    }
   };
 
   return (
@@ -61,12 +68,12 @@ const LoginPage = () => {
               className="size-16 mx-auto mb-4 rounded-full"
             />
             <h2 className="text-3xl font-bold text-gray-900">Insta Saver</h2>
-            <p className="text-gray-600 mt-2">Tizimga kirish</p>
+            <p className="text-gray-600 mt-2">Admin panelga kirish</p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
-            <InputComponent
+            <Input
               required
               name="username"
               label="Username"
@@ -75,7 +82,7 @@ const LoginPage = () => {
               onChange={(v) => setField("username", v?.trim())}
             />
 
-            <InputComponent
+            <Input
               required
               label="Parol"
               minLength={6}
@@ -85,9 +92,9 @@ const LoginPage = () => {
               onChange={(v) => setField("password", v)}
             />
 
-            <ButtonComponent disabled={isLoading} className="w-full">
+            <Button disabled={isLoading} className="w-full">
               Kirish{isLoading && "..."}
-            </ButtonComponent>
+            </Button>
           </form>
         </Card>
       </div>
