@@ -87,8 +87,8 @@ const SelectComponent = ({
               typeof opt === "object" ? (
                 <SelectItem
                   key={opt.value}
-                  value={opt.value}
                   disabled={opt.disabled}
+                  value={opt.value || opt.label}
                 >
                   {opt.label}
                 </SelectItem>

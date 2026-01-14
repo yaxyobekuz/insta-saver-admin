@@ -36,7 +36,7 @@ const DashboardPage = () => {
 
           {/* Xabarlar */}
           <Link
-            to="/broadcasts"
+            to="/messages"
             className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
           >
             <MessageCircle
