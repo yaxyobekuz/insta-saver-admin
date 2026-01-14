@@ -1,4 +1,4 @@
-const statsOptions = [
+const statusOptions = [
   { value: "all", label: "Barcha foydalanuvchilar" },
   { value: "high_activity", label: "Ko'p yuklagan (20+)" },
   { value: "high_success", label: "Muvaffaqiyatli (10+)" },
@@ -23,4 +23,4 @@ const sortOptions = [
   { value: "stats.failed-desc", label: "Xatolik ko'p" },
 ];
 
-export { statsOptions, recentOptions, sortOptions };
+export { statusOptions, recentOptions, sortOptions };
