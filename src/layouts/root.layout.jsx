@@ -9,6 +9,15 @@ import {
   MessageCircle,
 } from "lucide-react";
 
+// Router
+import {
+  Link,
+  Outlet,
+  Navigate,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
+
 // React
 import { useState } from "react";
 
@@ -18,30 +27,31 @@ import { logoImg } from "@/assets/images";
 // Utils
 import { formatDateUZ, getDayOfWeekUZ } from "@/utils/date.utils";
 
-// Router
-import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+const navigation = [
+  { name: "Dashboard", href: "/", icon: Home },
+  { name: "Foydalanuvchilar", href: "/users", icon: Users },
+  { name: "Xabarlar", href: "/messages", icon: MessageCircle },
+  { name: "Statistika", href: "/stats", icon: ChartBar },
+];
 
 const RootLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const isAuthenticated = localStorage.getItem("auth");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
     navigate("/login");
+    localStorage.removeItem("auth");
   };
-
-  // Role-based navigation
-  const navigation = [
-    { name: "Dashboard", href: "/", icon: Home },
-    { name: "Foydalanuvchilar", href: "/users", icon: Users },
-    { name: "Xabarlar", href: "/messages", icon: MessageCircle },
-    { name: "Statistika", href: "/stats", icon: ChartBar },
-  ];
 
   const isActive = (path) => {
     if (path === "/") return location.pathname === "/";
     return location.pathname.startsWith(path);
   };
+
+  // Redirect to login if not authenticated
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
 
   return (
     <>
