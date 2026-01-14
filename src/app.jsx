@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 // Pages
 import LoginPage from "./pages/login.page";
 import UsersPage from "./pages/users.page";
+import MessagesPage from "./pages/messages.page";
 import DashboardPage from "./pages/dashboard.page";
 
 // Layouts
@@ -23,6 +24,7 @@ const App = () => {
         <Route path="/" element={<RootLayout />}>
           <Route index element={<DashboardPage />} />
           <Route path="users" element={<UsersPage />} />
+          <Route path="messages" element={<MessagesPage />} />
         </Route>
 
         {/* 404 */}
