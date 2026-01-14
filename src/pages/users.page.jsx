@@ -1,17 +1,11 @@
 // Toast
 import { toast } from "sonner";
 
-// API
-import { usersAPI } from "../api/client";
-
 // React
 import { useEffect, useCallback } from "react";
 
 // Router
 import { useSearchParams } from "react-router-dom";
-
-// Helpers
-import { getRoleLabel } from "@/helpers/role.helpers";
 
 // Hooks
 import useModal from "@/hooks/useModal.hook";
@@ -60,16 +54,16 @@ const UsersPage = () => {
   const fetchUsers = useCallback(
     (page) => {
       setPageLoadingState(page, true);
-      usersAPI
-        .getAll({ page, limit: 32 })
-        .then((res) => {
-          const { data, pagination } = res.data;
-          setPage(page, data, null, pagination);
-        })
-        .catch(({ message }) => {
-          toast.error(message || "Nimadir xato ketdi");
-          setPageErrorState(page, message || "Nimadir xato ketdi");
-        });
+      // usersAPI
+      //   .getAll({ page, limit: 32 })
+      //   .then((res) => {
+      //     const { data, pagination } = res.data;
+      //     setPage(page, data, null, pagination);
+      //   })
+      //   .catch(({ message }) => {
+      //     toast.error(message || "Nimadir xato ketdi");
+      //     setPageErrorState(page, message || "Nimadir xato ketdi");
+      //   });
     },
     [setPageLoadingState, setPage, setPageErrorState]
   );
@@ -96,7 +90,10 @@ const UsersPage = () => {
   return (
     <div>
       {/* Create New Btn */}
-      <ButtonComponent onClick={() => openModal("createUser")} className="px-3.5 mb-6">
+      <ButtonComponent
+        onClick={() => openModal("createUser")}
+        className="px-3.5 mb-6"
+      >
         <Plus className="size-5 mr-2" strokeWidth={1.5} />
         Yangi foydalanuvchi
       </ButtonComponent>
@@ -110,7 +107,6 @@ const UsersPage = () => {
               <tr>
                 <th className="px-6 py-3 text-left">F.I.O</th>
                 <th className="px-6 py-3 text-left">Username</th>
-                <th className="px-6 py-3 text-left">Rol</th>
                 <th className="px-6 py-3 text-left">Sinf</th>
                 <th className="px-6 py-3 text-right">Harakatlar</th>
               </tr>
@@ -130,19 +126,6 @@ const UsersPage = () => {
                   {/* Username */}
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-500">{user.username}</div>
-                  </td>
-
-                  {/* Role */}
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`${
-                        user.role === "teacher"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-blue-100 text-blue-800"
-                      } px-2 inline-flex text-xs leading-5 font-semibold rounded-full`}
-                    >
-                      {getRoleLabel(user.role)}
-                    </span>
                   </td>
 
                   {/* Class */}

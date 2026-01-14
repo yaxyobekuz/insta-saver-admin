@@ -2,7 +2,7 @@
 import { toast } from "sonner";
 
 // API
-import { usersAPI } from "@/api/client";
+import { usersAPI } from "@/api";
 
 // Components
 import ResponsiveModal from "./responsive.modal";

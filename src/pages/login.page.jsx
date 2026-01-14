@@ -1,9 +1,6 @@
 // Toast
 import { toast } from "sonner";
 
-// API
-import { authAPI } from "../api/client";
-
 // Images
 import { logoImg } from "@/assets/images";
 
