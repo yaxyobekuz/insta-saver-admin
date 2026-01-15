@@ -6,6 +6,7 @@ import {
   Users,
   LogOut,
   ChartBar,
+  LinkIcon,
   MessageCircle,
 } from "lucide-react";
 
@@ -31,6 +32,7 @@ const navigation = [
   { name: "Dashboard", href: "/", icon: Home },
   { name: "Foydalanuvchilar", href: "/users", icon: Users },
   { name: "Xabarlar", href: "/messages", icon: MessageCircle },
+  { name: "Taklif havolalari", href: "/invite-links", icon: LinkIcon },
   { name: "Statistika", href: "/stats", icon: ChartBar },
 ];
 

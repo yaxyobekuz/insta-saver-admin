@@ -310,8 +310,9 @@ const UsersPage = () => {
                               {user.firstName?.charAt(0)?.toUpperCase() || "?"}
                             </span>
                           </div>
+
                           <div>
-                            <p className="text-sm font-medium text-gray-900">
+                            <p className="max-w-24 text-sm font-medium text-gray-900">
                               {user.firstName} {user.lastName}
                             </p>
                             <p className="text-xs text-gray-500">

@@ -6,6 +6,7 @@ import LoginPage from "./pages/login.page";
 import UsersPage from "./pages/users.page";
 import MessagesPage from "./pages/messages.page";
 import DashboardPage from "./pages/dashboard.page";
+import InviteLinksPage from "./pages/inviteLinks.page";
 
 // Layouts
 import RootLayout from "./layouts/root.layout";
@@ -25,6 +26,7 @@ const App = () => {
           <Route index element={<DashboardPage />} />
           <Route path="users" element={<UsersPage />} />
           <Route path="messages" element={<MessagesPage />} />
+          <Route path="invite-links" element={<InviteLinksPage />} />
         </Route>
 
         {/* 404 */}
